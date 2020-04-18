@@ -46,8 +46,15 @@
 
 (defn todo-list
   []
-  (let [visible-todos @(rf/subscribe [:visible-todos])]
+  (let [visible-todos @(rf/subscribe [:visible-todos])
+        all-complete? @(rf/subscribe [:all-complete?])]
     [:section#main
+     [:input#toggle-all
+      {:type      "checkbox"
+       :checked   all-complete?
+       :on-change #(rf/dispatch [:complete-all-toggle (not all-complete?)])}]
+     [:label {:for "toggle-all"}
+      "Mark all as complete"]
      [:ul
       (for [todo visible-todos]
         ^{:key (:id todo)}
@@ -55,6 +62,20 @@
 
 (comment (todo-list))
 (comment (rf/dispatch [:add-todo "that's cool"]))
+
+(defn footer-control-button
+  [key txt]
+  [:li
+   [:button {:on-click #(rf/dispatch [:set-showing key])} txt]])
+
+(defn footer-controls []
+  [:footer
+   [:ul
+    (for [[key txt] [[:all "All"]
+                     [:active "Active"]
+                     [:done "Completed"]]]
+      [footer-control-button key txt])
+    ]])
 
 (defn page-view [{:keys [header content]}]
   [:div.page-wrapper
@@ -69,7 +90,6 @@
   [page-view
    {:content "This was about it."}])
 
-
 (defn home []
   [page-view
    {:content
@@ -78,6 +98,7 @@
       [todo-input {:title   ""
                    :on-save #(rf/dispatch [:add-todo %])}]
       [todo-list]
+      [footer-controls]
       [:a {:href     "#about"
            :on-click #(rf/dispatch [:set-active-nav :about])}
        "Learn lots"]]]}])

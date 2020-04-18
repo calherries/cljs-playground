@@ -33,9 +33,22 @@
   (fn-traced  [db [_ id]]
               (update-in db [:todos] dissoc id)))
 
+(rf/reg-event-db
+  :set-showing
+  (fn-traced  [db [_ filter-kv]]
+              (assoc-in db [:showing] filter-kv)))
+
 ;; usage: (dispatch [:add-todo "a description string"])
 (rf/reg-event-db
   :add-todo
   (fn-traced  [{:keys [todos] :as db} [_ text]]
               (let [id (allocate-next-id todos)]
                 (assoc-in db [:todos id] {:id id :title text :done false}))))
+
+(rf/reg-event-db
+  :complete-all-toggle
+  (fn-traced [{:keys [todos] :as db} [_ new-done?]]
+             (let [new-todos (reduce #(assoc-in %1 [%2 :done] new-done?)
+                                     todos
+                                     (keys todos))]
+               (assoc-in db [:todos] new-todos))))
