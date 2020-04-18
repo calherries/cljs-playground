@@ -5,3 +5,8 @@
   :active-nav
   (fn [{:keys [page]}]
     {:page-id page}))
+
+(rf/reg-sub
+  :visible-todos
+  (fn [{:keys [todos]}]
+    (vals todos)))

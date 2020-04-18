@@ -12,13 +12,10 @@
   (rdom/render [app.views/app-root]
                (.getElementById js/document "app")))
 
-(rf/dispatch-sync [:initialize-db])
-
 (defn ^:export init
   []
   (rf/dispatch-sync [:initialize-db])
   (mount-root))
 
 (comment (map inc (range 10)))
-
 (comment (rf/dispatch-sync [:initialize-db]))
