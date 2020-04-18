@@ -1,12 +1,13 @@
 (ns app.views
-  (:require [app.routes]
-            [app.subs]
+  (:require [app.subs]
             [re-frame.core :as rf]))
 
 (defn page-view [{:keys [header content]}]
   [:div.page-wrapper
    [:header
-    [:a.logo {:href (app.routes/home)} "Home"]
+    [:a.logo {:href     "#home"
+              :on-click #(rf/dispatch [:set-active-nav :home])}
+     "Home"]
     [:h1 "Demo"]]
    [:main content]])
 
@@ -16,17 +17,18 @@
 
 (defn home []
   [page-view
-   {:content [:a {:href (app.routes/about)} "Learn More"]}])
+   {:content [:a {:href     "#about"
+                  :on-click #(rf/dispatch [:set-active-nav :about])}
+              "Learn More"]}])
 
-(defn app-view [{:keys [page-id]}]
+(defn pages [{:keys [page-id]}]
   (case page-id
-    :home
-    [home]
-    :about
-    [about]))
+    :home  [home]
+    :about [about]))
 
 (defn app-root []
-  (app-view @(rf/subscribe [::app.subs/app-view])))
+  (let [active-nav @(rf/subscribe [:active-nav])]
+    (pages active-nav)))
 
 (comment (map inc (range 2)))
 (comment (about))

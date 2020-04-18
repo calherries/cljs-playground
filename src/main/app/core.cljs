@@ -4,17 +4,21 @@
             [reagent.dom :as rdom]
             [app.events]
             [app.subs]
-            [app.views]
-            [app.routes]))
+            [app.views]))
 
-(defn mount-root []
+(defn mount-root
+  []
   (rf/clear-subscription-cache!)
   (rdom/render [app.views/app-root]
                (.getElementById js/document "app")))
 
-(defn ^:export init []
+(rf/dispatch-sync [:initialize-db])
+
+(defn ^:export init
+  []
   (rf/dispatch-sync [:initialize-db])
-  (app.routes/app-routes rf/dispatch)
   (mount-root))
 
 (comment (map inc (range 10)))
+
+(comment (rf/dispatch-sync [:initialize-db]))

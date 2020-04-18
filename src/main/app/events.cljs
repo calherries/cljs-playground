@@ -8,13 +8,6 @@
    {:page :home}))
 
 (rf/reg-event-db
- :routes/home
- (fn-traced  [db _]
-   (-> db
-       (assoc :page :home) )))
-
-(rf/reg-event-db
- :routes/about
- (fn-traced  [db _]
-   (-> db
-       (assoc :page :about))))
+  :set-active-nav
+  (fn-traced  [db [_ active-nav]]
+              (assoc db :page active-nav)))
